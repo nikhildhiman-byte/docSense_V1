@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -14,6 +14,14 @@ export default function LoginForm() {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
+  useEffect(() => {
+    const recordId = new URLSearchParams(window.location.search).get("recordId")
+    if (recordId) {
+      sessionStorage.setItem("salesforceRecordId", recordId)
+      sessionStorage.setItem("isSalesforceEmbed", "true")
+    }
+  }, [])
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
@@ -21,12 +29,7 @@ export default function LoginForm() {
 
     // Simple client-side validation
     if (username === "KizzyConsulting" && password === "Kizzy@12345") {
-      // Preserve the Salesforce record ID while navigating through login.
-      const recordId = new URLSearchParams(window.location.search).get("recordId")
-      if (recordId) {
-        sessionStorage.setItem("salesforceRecordId", recordId)
-      }
-
+      // The mount handler stores the Salesforce record ID before login interaction.
       // Set a flag in sessionStorage to indicate user is logged in
       sessionStorage.setItem("isAuthenticated", "true")
       router.push("/pdf-extract")

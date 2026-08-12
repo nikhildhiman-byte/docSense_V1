@@ -107,9 +107,25 @@ export default function PDFExtractionPage() {
     setStatusMessage(null)
 
     try {
+      const recordId =
+        new URLSearchParams(window.location.search).get("recordId") ||
+        sessionStorage.getItem("salesforceRecordId") ||
+        salesforceRecordId
+
+      if (recordId) {
+        sessionStorage.setItem("salesforceRecordId", recordId)
+        setSalesforceRecordId(recordId)
+      }
+
+      const isSalesforceFlow = sessionStorage.getItem("isSalesforceEmbed") === "true" || Boolean(recordId)
+      if (isSalesforceFlow && !recordId) {
+        throw new Error("Salesforce record ID is missing. Please reopen the app from Salesforce.")
+      }
+
       const base64 = await fileToBase64(selectedFile)
       setProgress(30)
 
+      console.log("[v0] Sending PDF extraction request with recordId:", recordId)
       const response = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -118,7 +134,7 @@ export default function PDFExtractionPage() {
           fileData: base64,
           mimeType: selectedFile.type,
           timestamp: new Date().toISOString(),
-          ...(salesforceRecordId ? { recordId: salesforceRecordId } : {}),
+          recordId,
         }),
       })
 
