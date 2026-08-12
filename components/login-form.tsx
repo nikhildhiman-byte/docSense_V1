@@ -21,6 +21,12 @@ export default function LoginForm() {
 
     // Simple client-side validation
     if (username === "KizzyConsulting" && password === "Kizzy@12345") {
+      // Preserve the Salesforce record ID while navigating through login.
+      const recordId = new URLSearchParams(window.location.search).get("recordId")
+      if (recordId) {
+        sessionStorage.setItem("salesforceRecordId", recordId)
+      }
+
       // Set a flag in sessionStorage to indicate user is logged in
       sessionStorage.setItem("isAuthenticated", "true")
       router.push("/pdf-extract")
