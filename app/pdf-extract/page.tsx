@@ -40,10 +40,7 @@ export default function PDFExtractionPage() {
     }
   }, [router])
 
-  // Configuration - Update these value
-  const N8N_WEBHOOK_URL =
-    process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL ||
-    "https://sourabhkaushal.app.n8n.cloud/webhook/a63cecd0-f478-452b-b0e7-85a8ea8b9f02"
+  // Configuration
   const GOOGLE_SHEET_ID = process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID || "1kiFc_WM0Yxv8SiyDVbK0SpgwkGyHhAsbM5kKozJXrpg"
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -113,7 +110,7 @@ export default function PDFExtractionPage() {
       const base64 = await fileToBase64(selectedFile)
       setProgress(30)
 
-      const response = await fetch(N8N_WEBHOOK_URL, {
+      const response = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

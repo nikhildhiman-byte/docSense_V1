@@ -6,7 +6,6 @@ export async function POST(request: NextRequest) {
     const { fileName, fileData, mimeType, timestamp, recordId } = body
 
     const N8N_WEBHOOK_URL =
-      process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL ||
       "https://sourabhkaushal.app.n8n.cloud/webhook/a63cecd0-f478-452b-b0e7-85a8ea8b9f02"
 
     // Forward request to n8n webhook
