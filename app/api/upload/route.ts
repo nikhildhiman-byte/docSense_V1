@@ -3,10 +3,24 @@ import { type NextRequest, NextResponse } from "next/server"
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { fileName, fileData, mimeType, timestamp } = body
+    const { fileName, fileData, mimeType, timestamp, recordId } = body
+
+    if (!recordId || typeof recordId !== "string") {
+      return NextResponse.json({ error: "Salesforce recordId is required" }, { status: 400 })
+    }
 
     const N8N_WEBHOOK_URL =
-      process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || "https://docsence1.app.n8n.cloud/webhook/5f7b9d31-679b-4424-8256-e9416e191005"
+      "https://sourabhkaushal.app.n8n.cloud/webhook/a63cecd0-f478-452b-b0e7-85a8ea8b9f02"
+
+    const webhookPayload = {
+      fileName,
+      fileData,
+      mimeType,
+      timestamp: timestamp ?? new Date().toISOString(),
+      recordId,
+    }
+
+    console.log("[v0] Sending PDF extraction request to n8n with recordId:", recordId)
 
     // Forward request to n8n webhook
     const response = await fetch(N8N_WEBHOOK_URL, {
@@ -14,12 +28,7 @@ export async function POST(request: NextRequest) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        fileName,
-        fileData,
-        mimeType,
-        timestamp: timestamp ?? new Date().toISOString(),
-      }),
+      body: JSON.stringify(webhookPayload),
     })
 
     if (!response.ok) {

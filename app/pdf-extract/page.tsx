@@ -30,14 +30,17 @@ export default function PDFExtractionPage() {
     const sfEmbed = sessionStorage.getItem("isSalesforceEmbed")
     setIsSalesforceEmbed(sfEmbed === "true")
 
-    // Get Salesforce record ID if available
-    const recordId = sessionStorage.getItem("salesforceRecordId")
+    // Get Salesforce record ID from the URL, falling back to the existing session value.
+    const recordIdFromUrl = new URLSearchParams(window.location.search).get("recordId")
+    const recordId = recordIdFromUrl || sessionStorage.getItem("salesforceRecordId")
     setSalesforceRecordId(recordId)
+
+    if (recordIdFromUrl) {
+      sessionStorage.setItem("salesforceRecordId", recordIdFromUrl)
+    }
   }, [router])
 
-  // Configuration - Update these value
-  const N8N_WEBHOOK_URL =
-    process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || "https://docsence1.app.n8n.cloud/webhook/5f7b9d31-679b-4424-8256-e9416e191005"
+  // Configuration
   const GOOGLE_SHEET_ID = process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID || "1kiFc_WM0Yxv8SiyDVbK0SpgwkGyHhAsbM5kKozJXrpg"
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -104,10 +107,26 @@ export default function PDFExtractionPage() {
     setStatusMessage(null)
 
     try {
+      const recordId =
+        new URLSearchParams(window.location.search).get("recordId") ||
+        sessionStorage.getItem("salesforceRecordId") ||
+        salesforceRecordId
+
+      if (recordId) {
+        sessionStorage.setItem("salesforceRecordId", recordId)
+        setSalesforceRecordId(recordId)
+      }
+
+      const isSalesforceFlow = sessionStorage.getItem("isSalesforceEmbed") === "true" || Boolean(recordId)
+      if (isSalesforceFlow && !recordId) {
+        throw new Error("Salesforce record ID is missing. Please reopen the app from Salesforce.")
+      }
+
       const base64 = await fileToBase64(selectedFile)
       setProgress(30)
 
-      const response = await fetch(N8N_WEBHOOK_URL, {
+      console.log("[v0] Sending PDF extraction request with recordId:", recordId)
+      const response = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -115,6 +134,7 @@ export default function PDFExtractionPage() {
           fileData: base64,
           mimeType: selectedFile.type,
           timestamp: new Date().toISOString(),
+          recordId,
         }),
       })
 
