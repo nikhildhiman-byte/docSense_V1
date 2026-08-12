@@ -30,9 +30,14 @@ export default function PDFExtractionPage() {
     const sfEmbed = sessionStorage.getItem("isSalesforceEmbed")
     setIsSalesforceEmbed(sfEmbed === "true")
 
-    // Get Salesforce record ID if available
-    const recordId = sessionStorage.getItem("salesforceRecordId")
+    // Get Salesforce record ID from the URL, falling back to the existing session value.
+    const recordIdFromUrl = new URLSearchParams(window.location.search).get("recordId")
+    const recordId = recordIdFromUrl || sessionStorage.getItem("salesforceRecordId")
     setSalesforceRecordId(recordId)
+
+    if (recordIdFromUrl) {
+      sessionStorage.setItem("salesforceRecordId", recordIdFromUrl)
+    }
   }, [router])
 
   // Configuration - Update these value
@@ -115,6 +120,7 @@ export default function PDFExtractionPage() {
           fileData: base64,
           mimeType: selectedFile.type,
           timestamp: new Date().toISOString(),
+          ...(salesforceRecordId ? { recordId: salesforceRecordId } : {}),
         }),
       })
 
