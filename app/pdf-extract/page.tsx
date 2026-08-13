@@ -4,10 +4,7 @@ import { useState, useRef, type DragEvent, type ChangeEvent, useEffect } from "r
 import { Upload, X, FileText, ExternalLink, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
-
 export default function PDFExtractionPage() {
-  const router = useRouter()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -20,10 +17,10 @@ export default function PDFExtractionPage() {
   const [salesforceRecordId, setSalesforceRecordId] = useState<string | null>(null)
 
   useEffect(() => {
-    const isAuthenticated = sessionStorage.getItem("isAuthenticated")
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
+    const recordIdFromUrl = new URLSearchParams(window.location.search).get("recordId")
+    if (recordIdFromUrl) {
+      sessionStorage.setItem("salesforceRecordId", recordIdFromUrl)
+      sessionStorage.setItem("isSalesforceEmbed", "true")
     }
 
     // Check if embedded in Salesforce
@@ -31,14 +28,9 @@ export default function PDFExtractionPage() {
     setIsSalesforceEmbed(sfEmbed === "true")
 
     // Get Salesforce record ID from the URL, falling back to the existing session value.
-    const recordIdFromUrl = new URLSearchParams(window.location.search).get("recordId")
     const recordId = recordIdFromUrl || sessionStorage.getItem("salesforceRecordId")
     setSalesforceRecordId(recordId)
-
-    if (recordIdFromUrl) {
-      sessionStorage.setItem("salesforceRecordId", recordIdFromUrl)
-    }
-  }, [router])
+  }, [])
 
   // Configuration
   const GOOGLE_SHEET_ID = process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID || "1kiFc_WM0Yxv8SiyDVbK0SpgwkGyHhAsbM5kKozJXrpg"
