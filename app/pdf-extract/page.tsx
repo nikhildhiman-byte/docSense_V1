@@ -28,7 +28,8 @@ export default function PDFExtractionPage() {
   }, [])
 
   // Configuration
-  const GOOGLE_SHEET_ID = process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID || "1kiFc_WM0Yxv8SiyDVbK0SpgwkGyHhAsbM5kKozJXrpg"
+  const GOOGLE_SHEET_URL =
+    "https://docs.google.com/spreadsheets/d/1LEaBoL7UM5mYM8fQ7ELFsllRLGcqcN2ATP2u2BLjSxg/edit?gid=1526114125#gid=1526114125"
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault()
@@ -138,7 +139,7 @@ export default function PDFExtractionPage() {
       setTimeout(() => {
         setIsProcessing(false)
         setShowResult(true)
-        setSheetUrl(`https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}`)
+        setSheetUrl(GOOGLE_SHEET_URL)
         setStatusMessage({ type: "success", message: "PDF processed successfully!" })
       }, 500)
 
