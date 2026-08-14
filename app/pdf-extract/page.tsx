@@ -13,7 +13,6 @@ export default function PDFExtractionPage() {
   const [sheetUrl, setSheetUrl] = useState<string>("")
   const [showResult, setShowResult] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [isSalesforceEmbed, setIsSalesforceEmbed] = useState(false)
   const [salesforceRecordId, setSalesforceRecordId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -22,10 +21,6 @@ export default function PDFExtractionPage() {
       sessionStorage.setItem("salesforceRecordId", recordIdFromUrl)
       sessionStorage.setItem("isSalesforceEmbed", "true")
     }
-
-    // Check if embedded in Salesforce
-    const sfEmbed = sessionStorage.getItem("isSalesforceEmbed")
-    setIsSalesforceEmbed(sfEmbed === "true")
 
     // Get Salesforce record ID from the URL, falling back to the existing session value.
     const recordId = recordIdFromUrl || sessionStorage.getItem("salesforceRecordId")
@@ -176,11 +171,6 @@ export default function PDFExtractionPage() {
     }
   }
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("isAuthenticated")
-    router.push("/login")
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#3b82f6] to-[#06b6d4] flex items-center justify-center p-4 sm:p-5">
       <a
@@ -197,16 +187,6 @@ export default function PDFExtractionPage() {
           className="h-16 sm:h-20 w-16 sm:w-20"
         />
       </a>
-
-      {/* Only show logout button when NOT embedded in Salesforce */}
-      {!isSalesforceEmbed && (
-        <button
-          onClick={handleLogout}
-          className="fixed top-4 sm:top-6 right-4 sm:right-6 px-3 sm:px-4 py-2 text-sm sm:text-base bg-white/20 hover:bg-white/30 text-white rounded-lg font-medium transition-all duration-200 border border-white/30 hover:border-white/50"
-        >
-          Logout
-        </button>
-      )}
 
       <div className="w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 mx-auto">
         {/* Header */}
