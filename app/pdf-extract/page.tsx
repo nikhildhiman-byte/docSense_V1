@@ -29,7 +29,7 @@ export default function PDFExtractionPage() {
 
   // Configuration
   const GOOGLE_SHEET_URL =
-    "https://docs.google.com/spreadsheets/d/1LEaBoL7UM5mYM8fQ7ELFsllRLGcqcN2ATP2u2BLjSxg/edit?gid=1526114125#gid=1526114125"
+    "https://docs.google.com/spreadsheets/d/1lnb8C4vYrjnqBU-Rj0ri4RFZFqRX4tTSHeKS56ZwTOM"
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault()
