@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     }
 
     const N8N_WEBHOOK_URL =
-      "https://docsense2.app.n8n.cloud/webhook/a63cecd0-f478-452b-b0e7-85a8ea8b9f02"
+      "https://docsense3.app.n8n.cloud/webhook-test/a63cecd0-f478-452b-b0e7-85a8ea8b9f02"
 
     const webhookPayload = {
       fileName,
